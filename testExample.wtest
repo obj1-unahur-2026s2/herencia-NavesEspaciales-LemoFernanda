@@ -1,9 +1,57 @@
-import example.pepita
+import example.*
 
-describe "group of tests for pepita" {
+describe "Pruebas de Naves Espaciales" {
 
-  test "pepita has initial energy" {
-    assert.equals(100, pepita.energy())
+  const naveBaliza = new NaveBaliza()
+  const navePasajeros = new NaveDePasajeros(cantidadDePasajeros = 10)
+  const naveCombate = new NaveDeCombate()
+  const naveHospital = new NaveHospital(cantidadDePasajeros = 20)
+  const naveSigilosa = new NaveDeCombateSigilosa()
+
+  test "Preparar viaje carga combustible y acelera a todas las naves" {
+    naveBaliza.prepararViaje()
+    
+    assert.equals(30000, naveBaliza.combustible())
+    assert.equals(5000, naveBaliza.velocidad())
+    assert.equals("verde", naveBaliza.baliza())
+    assert.equals(0, naveBaliza.direccion()) 
   }
 
+  test "Nave de pasajeros carga comida y bebida según cantidad de pasajeros" {
+    navePasajeros.prepararViaje()
+
+    assert.equals(40, navePasajeros.racionesDeComida()) // 10 * 4
+    assert.equals(60, navePasajeros.racionesDeBebida()) // 10 * 6
+    assert.equals(1, navePasajeros.direccion())       
+  }
+
+  test "Nave baliza no está tranquila si el color es rojo" {
+    naveBaliza.cargarCombustible(5000)
+    naveBaliza.acelerar(1000)
+    naveBaliza.cambiarColorDeBaliza("rojo")
+
+    assert.notThat(naveBaliza.estaTranquila())
+  }
+
+  test "Reacción ante amenazas en Nave Hospital prepara los quirófanos" {
+    naveHospital.recibirAmenaza()
+
+    assert.that(naveHospital.quirofanosPreparados())
+  }
+
+  test "Reacción ante amenazas en Nave Sigilosa se pone invisible y despliega misiles" {
+    naveSigilosa.recibirAmenaza()
+
+    assert.that(naveSigilosa.estaInvisible())
+    assert.that(naveSigilosa.misilesDesplegados())
+    assert.equals("Amenaza recibida", naveSigilosa.ultimoMensajeEmitido())
+  }
+
+  test "Nave baliza está de relajo si no cambió nunca de color y está tranquila" {
+    naveBaliza.cargarCombustible(5000)
+    naveBaliza.acelerar(1000)
+    naveBaliza.cambiarColorDeBaliza("azul") // Cambió de color
+    
+    assert.notThat(naveBaliza.estaDeRelajo()) // Da falso por cambiar de color
+  }
 }
